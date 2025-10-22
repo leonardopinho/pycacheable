@@ -1,0 +1,74 @@
+# --- PyCharm / JetBrains IDE ---
+.idea/
+*.iml
+
+# --- Python bytecode / cache ---
+__pycache__/
+*.py[cod]
+*$py.class
+
+# --- Virtual environments ---
+venv/
+env/
+.venv/
+.env/
+pip-wheel-metadata/
+Pipfile.lock
+
+# --- Poetry ---
+.poetry/
+poetry.lock
+
+# --- Build / distribution ---
+build/
+dist/
+*.egg-info/
+.eggs/
+MANIFEST
+*.manifest
+*.spec
+
+# --- Logs / debug ---
+*.log
+*.pot
+*.pid
+*.seed
+*.cover
+*.py,cover
+.coverage
+.coverage.*
+nosetests.xml
+coverage.xml
+*.coveragerc
+.cache/
+pytest_cache/
+.tox/
+.mypy_cache/
+.dmypy.json
+.pyre/
+
+# --- Jupyter notebooks ---
+.ipynb_checkpoints/
+*.ipynb~
+
+# --- Editors / OS specific ---
+.vscode/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Test / profiling ---
+*.prof
+*.tmp
+*.bak
+*.swp
+
+# --- Environments / secrets ---
+.env.local
+.env.test
+.env.dev
+.env.production
+*.secret
+secrets.json
+
+# --- Reports / doc
