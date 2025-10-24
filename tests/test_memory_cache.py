@@ -1,7 +1,7 @@
 import time
 import unittest
 
-from src import cacheable, InMemoryCache
+from src.pycacheable import cacheable, InMemoryCache
 
 
 class Repository:

@@ -34,9 +34,9 @@ A biblioteca fornece:
 ## Como usar
 
 ```python
-from src.pycacheable.backend_sqlite import SQLiteCache
-from src.pycacheable.backend_memory import InMemoryCache
-from src.pycacheable.cacheable import cacheable
+from pycacheable import SQLiteCache
+from pycacheable import InMemoryCache
+from pycacheable import cacheable
 
 mem = InMemoryCache(max_entries=512)
 disk = SQLiteCache(path="./.cache/myapp.sqlite")

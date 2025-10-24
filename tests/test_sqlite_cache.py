@@ -3,7 +3,7 @@ import tempfile
 import time
 import unittest
 
-from src import SQLiteCache, cacheable
+from src.pycacheable import SQLiteCache, cacheable
 
 
 class Repository:
