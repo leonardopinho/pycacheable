@@ -1,6 +1,6 @@
 [project]
 name = "pycacheable"
-version = "0.1.0"
+version = "0.1.1"
 description = "Decorator de cache para funções e métodos Python, com backends InMemory e SQLite, TTL configurável e hash estável de parâmetros."
 readme = "README.md"
 authors = [
