@@ -5,7 +5,7 @@ import threading
 import time
 from typing import Any, Dict, Optional, Tuple
 
-from src.pycacheable.cache_base import CacheBase
+from .cache_base import CacheBase
 
 
 class SQLiteCache(CacheBase):

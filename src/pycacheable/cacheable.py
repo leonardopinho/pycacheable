@@ -1,8 +1,8 @@
 import functools
 from typing import Any, Callable, Dict, Optional, Tuple
 
-from src.pycacheable.backend_sqlite import SQLiteCache
-from src.pycacheable.hashing import _build_key_from_call
+from .backend_sqlite import SQLiteCache
+from .hashing import _build_key_from_call
 
 
 def cacheable(

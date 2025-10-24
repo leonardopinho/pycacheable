@@ -3,7 +3,7 @@ import threading
 import time
 from typing import Any, Dict, Optional, Tuple, OrderedDict
 
-from src.pycacheable.cache_base import CacheBase
+from .cache_base import CacheBase
 
 
 class InMemoryCache(CacheBase):
