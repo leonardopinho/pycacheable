@@ -1,6 +1,6 @@
 # PyCacheable
 
-Decorator de cache para métodos e funções Python com backends em memória e SQLite — serialização automática, hash estável de parâmetros, suporte a instância/estado e arquitetura plugável.
+Decorator de cache para métodos e funções Python com backends em memória e SQLite — serialização automática com estratégia JSON-first + pickle fallback, hash estável de parâmetros, suporte a instância/estado e arquitetura plugável.
 
 ---
 
@@ -26,6 +26,9 @@ A biblioteca fornece:
   - `InMemoryCache`: cache volátil em memória com LRU + TTL.
   - `SQLiteCache`: cache persistente em disco (SQLite) com TTL, ideal para entre execuções ou processos;
 - Logs claros de fluxo: HIT / MISS / EXPIRE — permitindo entender se o cache está funcionando;
+- Serialização segura:
+  - JSON-first para estruturas simples (seguro, sem risco de RCE)
+  - Pickle fallback para objetos complexos (flexível)
 - Métodos auxiliares:
   - `.cache_clear()`, `.cache_info()` no wrapper para inspeção/manutenção;
 
@@ -62,11 +65,12 @@ u2 = repo.get_user(42)  # HIT → retorna cache, consulta não é executada
 
 ## Benefícios
 
-- Menor latência em chamadas repetidas (hit quase instantâneo).  
-- Menor carga no banco/serviço, menos I/O repetido.  
-- Persistência local (via SQLite) permite cache entre reinícios/processos.  
-- Transparente para o usuário da função — apenas aplicar o decorator.  
+- Menor latência em chamadas repetidas (hit quase instantâneo).
+- Menor carga no banco/serviço, menos I/O repetido.
+- Persistência local (via SQLite) permite cache entre reinícios/processos.
+- Transparente para o usuário da função — apenas aplicar o decorator.
 - Logs e métricas ajudam a monitorar impacto real.
+- Serialização segura com JSON-first (sem risco de arbitrary code execution).
 
 ---
 
@@ -81,10 +85,11 @@ u2 = repo.get_user(42)  # HIT → retorna cache, consulta não é executada
 
 ## Considerações e limites
 
-- O cache evita reexecuções **somente** se os parâmetros para o método forem os mesmos e serializáveis.  
-- Se o método depende de estados mutáveis fora dos parâmetros (ex.: `self.some_state`), você deve usar `include_self=True` ou custom `key_fn`.  
-- TTL é usado para expiração — resultados podem ficar “stale” se parâmetros ou contexto mudarem sem mudar a chave.  
-- Embora o backend SQLite seja persistente, ele **não substitui** um cache distribuído (ex.: Redis) em cenários multi‑processo/semi‑distribuídos.
+- O cache evita reexecuções **somente** se os parâmetros para o método forem os mesmos e serializáveis.
+- Se o método depende de estados mutáveis fora dos parâmetros (ex.: `self.some_state`), você deve usar `include_self=True` ou custom `key_fn`.
+- TTL é usado para expiração — resultados podem ficar "stale" se parâmetros ou contexto mudarem sem mudar a chave.
+- Embora o backend SQLite seja persistente, ele **não substitui** um cache distribuído (ex.: Redis) em cenários multi-processo/semi-distribuídos.
+- Pickle fallback mantém compatibilidade com objetos complexos, mas use com dados confiáveis.
 
 ---
 
@@ -94,11 +99,11 @@ Veja resultados reais que medem MISS vs HIT:
 
 | Backend | MISS (s) | HIT (s) | Speedup | Calls |
 |----------|-----------|----------|----------|--------|
-| RAW | 0.6827 | — | — | — |
-| InMemory | 0.6630 | 0.000113 | ~5 870× | 1 |
-| SQLite | 0.7157 | 0.000098 | ~7 300× | 1 |
+| RAW | 0.4410 | — | — | — |
+| InMemory | 0.4043 | 0.000043 | ~9,494x | 1 |
+| SQLite | 0.4001 | 0.000763 | ~524x | 1 |
 
-O cache reduz o tempo de execução de ~0.68 s para ~0.0001 s — um **speedup superior a 5 000×**.
+O cache reduz o tempo de execução de ~0.4 s para ~0.00004 s — um **speedup superior a 9.000×**.
 
 ---
 
