@@ -1,28 +1,28 @@
-# PyCacheable — Benchmarks de Desempenho (MISS vs HIT)
+# PyCacheable — Performance Benchmarks (MISS vs HIT)
 
-> Comparação prática entre execução direta (sem cache), cache em memória (`InMemoryCache`)
-> e cache persistente em disco (`SQLiteCache`).
-
----
-
-## Metodologia
-
-Os testes foram realizados com um workload **CPU-bound**, simulando um cenário de cálculo
-intenso que se beneficia fortemente de caching.
-
-### Cenário:
-- Função utilizada: **Série de Nilakantha** para aproximação de π.  
-- Iterações ajustadas automaticamente (`autotune_iter`) para gerar ~0.6 s de tempo de cálculo puro.  
-- Cada backend testado com:
-  - 1 chamada de *cache MISS* (primeiro acesso);
-  - 7 chamadas de *cache HIT* (reuso da mesma chave);
-- Resultados medidos via `time.perf_counter()` e agregados por mediana (para reduzir jitter).
+> Practical comparison between direct execution (no cache), in-memory cache (`InMemoryCache`)
+> and persistent disk cache (`SQLiteCache`).
 
 ---
-## Cálculo usado (Série de Nilakantha)
 
-A série converge rapidamente para π e é computacionalmente intensiva o suficiente
-para simular workloads de processamento real:
+## Methodology
+
+Tests were performed with a **CPU-bound** workload, simulating an intensive computation scenario
+that strongly benefits from caching.
+
+### Scenario:
+- Function used: **Nilakantha series** for π approximation.  
+- Iterations automatically adjusted (`autotune_iter`) to generate ~0.6 s of pure computation time.  
+- Each backend tested with:
+  - 1 *cache MISS* call (first access);
+  - 7 *cache HIT* calls (same key reuse);
+- Results measured via `time.perf_counter()` and aggregated by median (to reduce jitter).
+
+---
+## Calculation used (Nilakantha Series)
+
+The series converges quickly to π and is computationally intensive enough
+to simulate real-world processing workloads:
 
 ```python
 π = 3 + Σ [ 4 / ((2k)(2k+1)(2k+2)) * (-1)^(k+1) ]
@@ -30,51 +30,51 @@ para simular workloads de processamento real:
 
 ---
 
-## Resultados
+## Results
 
 | Backend   | Mode | Iterations | Seconds  | Calls |
 |------------|------|-------------|-----------|--------|
-| RAW        | MISS | 2 739 255 | 0.6827 | — |
-| InMemory   | MISS | 2 739 255 | 0.6630 | 1 |
-| InMemory   | HIT  | 2 739 255 | 0.000113 | 1 |
-| SQLite     | MISS | 2 739 255 | 0.7157 | 1 |
-| SQLite     | HIT  | 2 739 255 | 0.000098 | 1 |
+| RAW        | MISS | 2,739,255 | 0.6827 | — |
+| InMemory   | MISS | 2,739,255 | 0.6630 | 1 |
+| InMemory   | HIT  | 2,739,255 | 0.000113 | 1 |
+| SQLite     | MISS | 2,739,255 | 0.7157 | 1 |
+| SQLite     | HIT  | 2,739,255 | 0.000098 | 1 |
 
 ---
 
-## Interpretação
+## Interpretation
 
-| Backend   | Speedup (HIT / MISS) | Observações |
+| Backend   | Speedup (HIT / MISS) | Notes |
 |------------|----------------------|--------------|
-| **InMemory** | **~5 870×** | HIT praticamente instantâneo; ideal para cache de execução local e jobs curtos. |
-| **SQLite**   | **~7 300×** | Desempenho semelhante, com persistência entre execuções e processos. |
+| **InMemory** | **~5,870×** | HIT nearly instant; ideal for local execution cache and short jobs. |
+| **SQLite**   | **~7,300×** | Similar performance, with persistence between executions and processes. |
 
-**Resumo:**  
-O cache reduz o tempo de execução de ~0.68 s para ~0.0001 s — um **speedup superior a 5 000×**.  
-A diferença entre `InMemory` e `SQLite` é marginal no HIT, mostrando que o overhead
-de I/O é quase desprezível frente ao custo de cálculo original.
+**Summary:**  
+Cache reduces execution time from ~0.68 s to ~0.0001 s — a **speedup over 5,000×**.  
+The difference between `InMemory` and `SQLite` is marginal on HIT, showing that I/O overhead
+is almost negligible compared to original computation cost.
 
 ---
 
-## Gráfico
+## Chart
 
 ![Cache Benchmarks](./cache_benchmarks.png)
 
 ---
-## Reprodutibilidade
+## Reproducibility
 
-Para reproduzir os benchmarks localmente:
+To reproduce benchmarks locally:
 
 ```bash
 python benchmarks/bench_pi.py
 ```
 
-O script:
-1. Ajusta automaticamente o número de iterações (`autotune_iter`);
-2. Executa o cálculo puro (RAW);
-3. Executa os mesmos cálculos decorados com `@cacheable`:
-   - uma vez (MISS),
-   - várias vezes (HIT);
-4. Exporta resultados `.csv` e `.png` para `benchmarks/`.
+The script:
+1. Automatically adjusts iteration count (`autotune_iter`);
+2. Executes pure calculation (RAW);
+3. Executes the same calculations decorated with `@cacheable`:
+   - once (MISS),
+   - multiple times (HIT);
+4. Exports results to `.csv` and `.png` to `benchmarks/`.
 
 ---
